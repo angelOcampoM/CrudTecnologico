@@ -1,7 +1,12 @@
 :root {
-  font-family: Arial, sans-serif;
+  font-family: 'Trebuchet MS', 'Segoe UI', Arial, sans-serif;
   color: #1f2937;
-  background: #f3f4f6;
+  background: #eaf4ff;
+  --surface: #ffffff;
+  --line: #d7e1eb;
+  --primary: #1d4ed8;
+  --secondary: #fbbf24;
+  --danger: #e63946;
 }
 
 * {
@@ -10,6 +15,7 @@
 
 body {
   margin: 0;
+  background: linear-gradient(180deg, #8ecbff 0%, #eaf4ff 35%, #f7fafc 100%);
 }
 
 .container {
@@ -20,19 +26,23 @@ body {
 
 h1 {
   margin-bottom: 8px;
+  color: var(--danger);
+  letter-spacing: 0.02em;
 }
 
 .subtitle {
   margin-top: 0;
   margin-bottom: 20px;
+  color: #334155;
 }
 
 .card {
-  background: #fff;
-  border-radius: 8px;
-  padding: 16px;
+  background: var(--surface);
+  border-radius: 12px;
+  padding: 18px;
   margin-bottom: 20px;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+  border: 1px solid var(--line);
+  box-shadow: 0 8px 18px rgba(17, 24, 39, 0.08);
 }
 
 form {
@@ -44,6 +54,13 @@ input {
   border: 1px solid #cbd5e1;
   border-radius: 6px;
   padding: 10px;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+input:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(29, 78, 216, 0.18);
 }
 
 .actions {
@@ -58,16 +75,26 @@ button {
   padding: 10px 14px;
   font-weight: 600;
   color: #fff;
-  background: #2563eb;
+  background: var(--primary);
   cursor: pointer;
+  transition: transform 0.12s ease, filter 0.12s ease;
+}
+
+button:hover {
+  filter: brightness(1.05);
+}
+
+button:active {
+  transform: translateY(1px);
 }
 
 button.secondary {
-  background: #6b7280;
+  background: var(--secondary);
+  color: #1f2937;
 }
 
 button.warn {
-  background: #dc2626;
+  background: var(--danger);
 }
 
 #message {
@@ -89,12 +116,19 @@ button.warn {
 table {
   width: 100%;
   border-collapse: collapse;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+thead {
+  background: #eff6ff;
 }
 
 th,
 td {
   text-align: left;
-  border-bottom: 1px solid #e5e7eb;
+  border-bottom: 1px solid var(--line);
   padding: 10px 8px;
 }
 

@@ -62,7 +62,7 @@ La entidad seleccionada es **Estudiante** y cada registro contiene 5 campos:
 ## Evidencias o capturas de pantalla
 Interfaz principal del sistema:
 
-![Captura del CRUD funcionando](assets/captura-crud.png)
+![Captura del CRUD funcionando](assets/captura-crud-mariobros.png)
 
 ## Uso de Inteligencia Artificial
 Sí se utilizó IA como apoyo para:
