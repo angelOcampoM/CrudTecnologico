@@ -3,6 +3,7 @@
   color: #1f2937;
   background: #dbeafe;
   --surface: #eff6ff;
+  --table-surface: #ffffff;
   --line: #93c5fd;
   --primary: #2563eb;
   --primary-deep: #1e3a8a;
@@ -148,7 +149,7 @@ table {
   border: 3px solid var(--primary-deep);
   border-radius: 8px;
   overflow: hidden;
-  background: #f8fbff;
+  background: var(--table-surface);
 }
 
 thead {
