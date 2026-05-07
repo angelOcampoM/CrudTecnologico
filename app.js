@@ -1,339 +1,306 @@
-const STORAGE_KEY = 'crud-estudiantes';
-const MIN_GRADE = 0;
-const MAX_GRADE = 10;
+(() => {
+  const canvas = document.getElementById('bg-canvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
 
-const studentForm = document.getElementById('student-form');
-const studentIdInput = document.getElementById('student-id');
-const nameInput = document.getElementById('name');
-const enrollmentInput = document.getElementById('enrollment');
-const emailInput = document.getElementById('email');
-const courseInput = document.getElementById('course');
-const gradeInput = document.getElementById('grade');
-const message = document.getElementById('message');
-const studentList = document.getElementById('student-list');
-const total = document.getElementById('total');
-const formTitle = document.getElementById('form-title');
-const cancelBtn = document.getElementById('cancel-btn');
-const pacmanCanvas = document.getElementById('pacman-bg');
-
-let students = loadStudents();
-let idSequence = 0;
-gradeInput.min = String(MIN_GRADE);
-gradeInput.max = String(MAX_GRADE);
-
-function loadStudents() {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    const data = raw ? JSON.parse(raw) : [];
-    return Array.isArray(data) ? data : [];
-  } catch {
-    return [];
+  let w = 0, h = 0, dpr = 1;
+  function resize(){
+    dpr = window.devicePixelRatio || 1;
+    w = window.innerWidth; h = window.innerHeight;
+    canvas.style.width = w + 'px';
+    canvas.style.height = h + 'px';
+    canvas.width = Math.floor(w * dpr);
+    canvas.height = Math.floor(h * dpr);
+    ctx.setTransform(dpr,0,0,dpr,0,0);
   }
-}
+  window.addEventListener('resize', resize);
+  resize();
 
-function saveStudents() {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(students));
-}
-
-function resetForm() {
-  studentForm.reset();
-  studentIdInput.value = '';
-  cancelBtn.hidden = true;
-  formTitle.textContent = 'Registrar estudiante';
-}
-
-function showMessage(text, isError = false) {
-  message.textContent = text;
-  message.style.color = isError ? '#dc2626' : '#065f46';
-}
-
-function generateId() {
-  if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
-    let uuid = crypto.randomUUID();
-    while (students.some((student) => student.id === uuid)) {
-      uuid = crypto.randomUUID();
-    }
-    return uuid;
-  }
-  let fallbackId = '';
-  do {
-    idSequence += 1;
-    fallbackId = `${Date.now()}-${idSequence}-${Math.random().toString(16).slice(2)}-${Math.random().toString(16).slice(2)}`;
-  } while (students.some((student) => student.id === fallbackId));
-  return fallbackId;
-}
-
-function renderStudents() {
-  total.textContent = `Total: ${students.length}`;
-
-  if (students.length === 0) {
-    studentList.innerHTML = '<tr><td class="empty" colspan="6">Sin registros</td></tr>';
-    return;
-  }
-
-  const fragment = document.createDocumentFragment();
-
-  students.forEach((student) => {
-    const row = document.createElement('tr');
-    const values = [student.name, student.enrollment, student.email, student.course, student.grade];
-    values.forEach((value) => {
-      const cell = document.createElement('td');
-      cell.textContent = String(value);
-      row.appendChild(cell);
-    });
-
-    const actionsCell = document.createElement('td');
-    const actionsWrapper = document.createElement('div');
-    actionsWrapper.className = 'row-actions';
-
-    const editButton = document.createElement('button');
-    editButton.type = 'button';
-    editButton.dataset.action = 'edit';
-    editButton.dataset.id = student.id;
-    editButton.textContent = 'Editar';
-
-    const deleteButton = document.createElement('button');
-    deleteButton.type = 'button';
-    deleteButton.className = 'warn';
-    deleteButton.dataset.action = 'delete';
-    deleteButton.dataset.id = student.id;
-    deleteButton.textContent = 'Eliminar';
-
-    actionsWrapper.append(editButton, deleteButton);
-    actionsCell.appendChild(actionsWrapper);
-    row.appendChild(actionsCell);
-    fragment.appendChild(row);
-  });
-
-  studentList.innerHTML = '';
-  studentList.appendChild(fragment);
-}
-
-function validateForm(data) {
-  if (!data.name || !data.enrollment || !data.email || !data.course || !data.grade) {
-    return 'Todos los campos son obligatorios.';
-  }
-
-  if (!emailInput.checkValidity()) {
-    return 'Ingresa un correo válido.';
-  }
-
-  const gradeValue = Number(data.grade);
-  if (Number.isNaN(gradeValue) || gradeValue < MIN_GRADE || gradeValue > MAX_GRADE) {
-    return `El promedio debe estar entre ${MIN_GRADE} y ${MAX_GRADE}.`;
-  }
-
-  return null;
-}
-
-studentForm.addEventListener('submit', (event) => {
-  event.preventDefault();
-
-  const data = {
-    id: studentIdInput.value || generateId(),
-    name: nameInput.value.trim(),
-    enrollment: enrollmentInput.value.trim(),
-    email: emailInput.value.trim(),
-    course: courseInput.value.trim(),
-    grade: gradeInput.value.trim(),
-  };
-
-  const error = validateForm(data);
-  if (error) {
-    showMessage(error, true);
-    return;
-  }
-
-  if (studentIdInput.value) {
-    const existingIndex = students.findIndex((student) => student.id === data.id);
-    if (existingIndex === -1) {
-      showMessage('No se encontró el estudiante a actualizar.', true);
-      resetForm();
-      return;
-    }
-    students[existingIndex] = data;
-    showMessage('Estudiante actualizado correctamente.');
-  } else {
-    students.push(data);
-    showMessage('Estudiante registrado correctamente.');
-  }
-
-  saveStudents();
-  renderStudents();
-  resetForm();
-});
-
-studentList.addEventListener('click', (event) => {
-  const button = event.target.closest('button[data-action]');
-  if (!button) {
-    return;
-  }
-
-  const { action, id } = button.dataset;
-  const student = students.find((item) => item.id === id);
-  if (!student) {
-    return;
-  }
-
-  if (action === 'edit') {
-    studentIdInput.value = student.id;
-    nameInput.value = student.name;
-    enrollmentInput.value = student.enrollment;
-    emailInput.value = student.email;
-    courseInput.value = student.course;
-    gradeInput.value = student.grade;
-    cancelBtn.hidden = false;
-    formTitle.textContent = 'Editar estudiante';
-    showMessage('Modo edición activo.');
-    return;
-  }
-
-  if (action === 'delete') {
-    const confirmed = window.confirm(`¿Eliminar a ${String(student.name)}?`);
-    if (!confirmed) {
-      return;
-    }
-
-    students = students.filter((item) => item.id !== id);
-    saveStudents();
-    renderStudents();
-    resetForm();
-    showMessage('Estudiante eliminado correctamente.');
-  }
-});
-
-cancelBtn.addEventListener('click', () => {
-  resetForm();
-  showMessage('Edición cancelada.');
-});
-
-function setupPacmanBackground() {
-  if (!pacmanCanvas) {
-    return;
-  }
-
-  const context = pacmanCanvas.getContext('2d');
-  if (!context) {
-    return;
-  }
-
-  const reducedMotionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
-  const cellSize = 32;
-  let width = 0;
-  let height = 0;
-  let animationFrameId = 0;
-  let x = 0;
-  let direction = 1;
-  let mouthOpen = true;
-  let frameCount = 0;
-
-  function resizeCanvas() {
-    width = window.innerWidth;
-    height = window.innerHeight;
-    pacmanCanvas.width = width;
-    pacmanCanvas.height = height;
-  }
-
-  function drawMaze() {
-    context.strokeStyle = 'rgba(30, 58, 138, 0.3)';
-    context.lineWidth = 2;
-    for (let y = cellSize; y < height; y += cellSize * 2) {
-      for (let startX = 0; startX < width; startX += cellSize * 4) {
-        context.beginPath();
-        context.moveTo(startX, y);
-        context.lineTo(startX + cellSize * 2, y);
-        context.stroke();
+  // Pellets grid
+  const pellets = [];
+  function buildPellets(){
+    pellets.length = 0;
+    const gap = 36;
+    const margin = 24;
+    for(let y = margin; y < h - margin; y += gap){
+      for(let x = margin; x < w - margin; x += gap){
+        pellets.push({x, y, r: 3, eaten: false});
       }
     }
   }
+  buildPellets();
 
-  function drawDots(laneY) {
-    context.fillStyle = 'rgba(255, 255, 255, 0.85)';
-    for (let dotX = 10; dotX < width; dotX += 26) {
-      context.beginPath();
-      context.arc(dotX, laneY, 2.5, 0, Math.PI * 2);
-      context.fill();
+  // Pac‑Man
+  const pac = {x: w*0.2, y: h*0.5, speed: 3.2, angle:0, mouth:0, mouthDir:1};
+  const target = {x: pac.x, y: pac.y};
+
+  // Ghosts
+  const ghostColors = ['#ff6b6b','#6be3ff','#ffd86b'];
+  const ghosts = [];
+  for(let i=0;i<3;i++){
+    ghosts.push({x: w*(0.6 + i*0.08), y: h*(0.4 + (i-1)*0.08), vx: (Math.random()*2-1)*1.2, vy:(Math.random()*2-1)*1.2, color: ghostColors[i]});
+  }
+
+  // Mouse interaction (canvas is pointer-events:none, so listen on window)
+  window.addEventListener('mousemove', (e)=>{ target.x = e.clientX; target.y = e.clientY; });
+  window.addEventListener('touchmove', (e)=>{ if(e.touches && e.touches[0]){ target.x = e.touches[0].clientX; target.y = e.touches[0].clientY; } }, {passive:true});
+
+  function drawPellets(){
+    ctx.fillStyle = 'rgba(255,255,255,0.9)';
+    for(const p of pellets){
+      if (p.eaten) continue;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
+      ctx.fill();
     }
   }
 
-  function drawPacman(centerX, centerY) {
-    const mouth = mouthOpen ? 0.32 : 0.12;
-    const start = direction === 1 ? mouth : Math.PI + mouth;
-    const end = direction === 1 ? Math.PI * 2 - mouth : Math.PI - mouth;
-    context.fillStyle = '#facc15';
-    context.beginPath();
-    context.moveTo(centerX, centerY);
-    context.arc(centerX, centerY, 16, start, end, false);
-    context.closePath();
-    context.fill();
+  function drawPac(){
+    const dx = target.x - pac.x;
+    const dy = target.y - pac.y;
+    pac.angle = Math.atan2(dy, dx);
+    // mouth animation
+    pac.mouth += 0.18 * pac.mouthDir;
+    if(pac.mouth > 0.9 || pac.mouth < 0.05) pac.mouthDir *= -1;
+
+    const r = 20;
+    ctx.fillStyle = '#ffd400';
+    ctx.beginPath();
+    const mouthAngle = 0.25 * pac.mouth;
+    ctx.moveTo(pac.x, pac.y);
+    ctx.arc(pac.x, pac.y, r, pac.angle + mouthAngle, pac.angle + Math.PI*2 - mouthAngle);
+    ctx.closePath();
+    ctx.fill();
   }
 
-  function drawGhost(centerX, centerY) {
-    context.fillStyle = 'rgba(236, 72, 153, 0.85)';
-    context.beginPath();
-    context.arc(centerX, centerY, 14, Math.PI, 0);
-    context.lineTo(centerX + 14, centerY + 10);
-    context.lineTo(centerX + 7, centerY + 6);
-    context.lineTo(centerX, centerY + 10);
-    context.lineTo(centerX - 7, centerY + 6);
-    context.lineTo(centerX - 14, centerY + 10);
-    context.closePath();
-    context.fill();
-  }
+  function update(delta){
+    // move pac toward target
+    const dx = target.x - pac.x;
+    const dy = target.y - pac.y;
+    const dist = Math.hypot(dx,dy) || 1;
+    const move = Math.min(pac.speed, dist);
+    pac.x += (dx/dist) * move * 0.9;
+    pac.y += (dy/dist) * move * 0.9;
 
-  function animate() {
-    if (width === 0 || height === 0) {
-      return;
+    // eat pellets
+    for(const p of pellets){
+      if(p.eaten) continue;
+      const d = Math.hypot(p.x - pac.x, p.y - pac.y);
+      if(d < 22){ p.eaten = true; }
     }
 
-    context.clearRect(0, 0, width, height);
-    drawMaze();
-
-    const laneY = Math.max(120, height * 0.25);
-    drawDots(laneY);
-
-    x += direction * 2;
-    if (x > width + 30) {
-      x = width + 30;
-      direction = -1;
-    } else if (x < -30) {
-      x = -30;
-      direction = 1;
+    // update ghosts
+    for(const g of ghosts){
+      g.x += g.vx;
+      g.y += g.vy;
+      if(g.x < 18 || g.x > w-18) g.vx *= -1;
+      if(g.y < 18 || g.y > h-18) g.vy *= -1;
+      // slight random steering
+      if(Math.random() < 0.01){ g.vx += (Math.random()-0.5)*0.8; g.vy += (Math.random()-0.5)*0.8; }
+      g.vx = Math.max(Math.min(g.vx,2.2),-2.2);
+      g.vy = Math.max(Math.min(g.vy,2.2),-2.2);
     }
-
-    frameCount += 1;
-    if (frameCount % 6 === 0) {
-      mouthOpen = !mouthOpen;
-    }
-    drawPacman(x, laneY);
-    drawGhost(x - direction * 80, laneY);
-
-    animationFrameId = window.requestAnimationFrame(animate);
   }
 
-  resizeCanvas();
-  if (width === 0 || height === 0) {
-    return;
-  }
-  window.addEventListener('resize', resizeCanvas);
-
-  if (!reducedMotionQuery.matches) {
-    animate();
-  } else {
-    context.clearRect(0, 0, width, height);
-    drawMaze();
-  }
-
-  reducedMotionQuery.addEventListener('change', () => {
-    if (reducedMotionQuery.matches) {
-      window.cancelAnimationFrame(animationFrameId);
-      context.clearRect(0, 0, width, height);
-      drawMaze();
-      return;
+  function drawGhost(g){
+    const gw = 28, gh = 24;
+    ctx.save();
+    ctx.translate(g.x, g.y);
+    // body
+    ctx.fillStyle = g.color;
+    ctx.beginPath();
+    ctx.arc(0, -2, gw/2, Math.PI, 0, false);
+    ctx.lineTo(gw/2, gh/2);
+    // scallops
+    const scallop = 4;
+    for(let i=0;i<3;i++){
+      const cx = gw/2 - (i+1)* (gw/4);
+      ctx.quadraticCurveTo(cx, gh/2 - scallop -2, cx - gw/6, gh/2);
     }
-    animate();
+    ctx.lineTo(-gw/2, gh/2);
+    ctx.closePath();
+    ctx.fill();
+    // eyes
+    ctx.fillStyle = '#fff';
+    ctx.beginPath(); ctx.arc(-6, -2, 4,0,Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.arc(6, -2, 4,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle = '#000'; ctx.beginPath(); ctx.arc(-5, -1, 1.8,0,Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.arc(7, -1, 1.8,0,Math.PI*2); ctx.fill();
+    ctx.restore();
+  }
+
+  let last = performance.now();
+  function loop(t){
+    const dt = t - last; last = t;
+    update(dt);
+
+    ctx.clearRect(0,0,w,h);
+    // subtle background glow
+    const grd = ctx.createLinearGradient(0,0,w,h);
+    grd.addColorStop(0,'rgba(0,0,0,0.75)');
+    grd.addColorStop(1,'rgba(10,10,30,0.75)');
+    ctx.fillStyle = grd;
+    ctx.fillRect(0,0,w,h);
+
+    drawPellets();
+    drawPac();
+    for(const g of ghosts) drawGhost(g);
+
+    requestAnimationFrame(loop);
+  }
+  requestAnimationFrame(loop);
+
+  // Rebuild pellets when viewport changes size substantially
+  let rebuildTimeout = null;
+  window.addEventListener('resize', ()=>{
+    clearTimeout(rebuildTimeout);
+    rebuildTimeout = setTimeout(()=>{ buildPellets(); }, 200);
   });
-}
 
-setupPacmanBackground();
-renderStudents();
+})();
+
+// --- CRUD UI (LocalStorage) ---
+document.addEventListener('DOMContentLoaded', ()=>{
+  const STORAGE_KEY = 'productos_v1';
+
+  const form = document.getElementById('product-form');
+  const tbody = document.querySelector('#products-table tbody');
+  const idInput = document.getElementById('product-id');
+  const nameInput = document.getElementById('product-name');
+  const descInput = document.getElementById('product-desc');
+  const priceInput = document.getElementById('product-price');
+  const catInput = document.getElementById('product-cat');
+  const saveBtn = document.getElementById('save-btn');
+  const cancelBtn = document.getElementById('cancel-btn');
+
+  function getProducts(){
+    try{ return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'); }catch(e){ return []; }
+  }
+  function saveProducts(list){ localStorage.setItem(STORAGE_KEY, JSON.stringify(list)); }
+
+  function render(){
+    const list = getProducts();
+    tbody.innerHTML = '';
+    if(list.length === 0){
+      const tr = document.createElement('tr');
+      tr.innerHTML = '<td colspan="5" style="opacity:.7">No hay productos registrados.</td>';
+      tbody.appendChild(tr);
+      return;
+    }
+    for(const p of list){
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>${escapeHtml(p.name)}</td>
+        <td>${escapeHtml(p.desc)}</td>
+        <td>$${Number(p.price).toFixed(2)}</td>
+        <td>${escapeHtml(p.cat)}</td>
+        <td>
+          <button class="btn-small" data-action="edit" data-id="${p.id}">Editar</button>
+          <button class="btn-small btn-danger" data-action="delete" data-id="${p.id}">Eliminar</button>
+        </td>
+      `;
+      tbody.appendChild(tr);
+    }
+  }
+
+  function resetForm(){
+    idInput.value = '';
+    form.reset();
+    saveBtn.textContent = 'Guardar';
+  }
+
+  function escapeHtml(str){ return String(str).replace(/[&<>"]/g, s=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[s])); }
+
+  form.addEventListener('submit', (e)=>{
+    e.preventDefault();
+    const id = idInput.value.trim();
+    const name = nameInput.value.trim();
+    const desc = descInput.value.trim();
+    const price = parseFloat(priceInput.value) || 0;
+    const cat = catInput.value.trim();
+    if(!name || !desc || !cat){ 
+      Swal.fire({
+        icon: 'warning',
+        title: 'Campo incompleto',
+        text: 'Completa todos los campos.',
+        confirmButtonText: 'Ok'
+      });
+      return; 
+    }
+
+    const list = getProducts();
+    if(id){
+      // update
+      const idx = list.findIndex(x=>String(x.id) === String(id));
+      if(idx !== -1){ list[idx] = { ...list[idx], name, desc, price, cat }; }
+      saveProducts(list);
+      render();
+      resetForm();
+      Swal.fire({
+        icon: 'success',
+        title: 'Éxito',
+        text: 'Producto actualizado correctamente.',
+        timer: 1500,
+        showConfirmButton: false
+      });
+    } else {
+      // create
+      const newItem = { id: Date.now().toString(36), name, desc, price, cat };
+      list.push(newItem);
+      saveProducts(list);
+      render();
+      resetForm();
+      Swal.fire({
+        icon: 'success',
+        title: '¡Producto agregado!',
+        text: 'El producto se ha agregado correctamente.',
+        timer: 1500,
+        showConfirmButton: false
+      });
+    }
+  });
+
+  cancelBtn.addEventListener('click', (e)=>{ e.preventDefault(); resetForm(); });
+
+  tbody.addEventListener('click', (e)=>{
+    const btn = e.target.closest('button');
+    if(!btn) return;
+    const action = btn.dataset.action;
+    const id = btn.dataset.id;
+    if(action === 'edit'){
+      const list = getProducts();
+      const item = list.find(x=>String(x.id) === String(id));
+      if(!item) return; idInput.value = item.id; nameInput.value = item.name; descInput.value = item.desc; priceInput.value = item.price; catInput.value = item.cat; saveBtn.textContent = 'Actualizar';
+      window.scrollTo({top:0,behavior:'smooth'});
+    } else if(action === 'delete'){
+      Swal.fire({
+        icon: 'warning',
+        title: '¿Eliminar producto?',
+        text: 'Esta acción no se puede deshacer.',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Sí, eliminar',
+        cancelButtonText: 'Cancelar'
+      }).then((result)=>{
+        if(result.isConfirmed){
+          let list = getProducts();
+          list = list.filter(x=>String(x.id) !== String(id));
+          saveProducts(list);
+          render();
+          Swal.fire({
+            icon: 'success',
+            title: 'Eliminado',
+            text: 'El producto ha sido eliminado.',
+            timer: 1500,
+            showConfirmButton: false
+          });
+        }
+      });
+    }
+  });
+
+  // initial render
+  render();
+});
+

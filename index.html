@@ -1,68 +1,56 @@
 <!doctype html>
 <html lang="es">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>CRUD Estudiantes</title>
-    <link rel="stylesheet" href="styles.css" />
-  </head>
-  <body>
-    <canvas id="pacman-bg" aria-hidden="true"></canvas>
-    <main class="container">
-      <h1>CRUD de Estudiantes</h1>
-      <p class="subtitle">Gestiona estudiantes con persistencia en LocalStorage.</p>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>CrudTecnologico</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <canvas id="bg-canvas"></canvas>
+  <main id="content">
+    <h1>CRUD Tecnológico</h1>
+    <p>El fondo es decorativo. Usa el formulario para gestionar productos.</p>
 
-      <section class="card">
-        <h2 id="form-title">Registrar estudiante</h2>
-        <form id="student-form" novalidate>
-          <input type="hidden" id="student-id" />
-
-          <label for="name">Nombre completo</label>
-          <input id="name" name="name" type="text" maxlength="60" required />
-
-          <label for="enrollment">Matrícula</label>
-          <input id="enrollment" name="enrollment" type="text" maxlength="20" required />
-
-          <label for="email">Correo</label>
-          <input id="email" name="email" type="email" maxlength="80" required />
-
-          <label for="course">Curso</label>
-          <input id="course" name="course" type="text" maxlength="40" required />
-
-          <label for="grade">Promedio</label>
-          <input id="grade" name="grade" type="number" min="0" max="10" step="0.1" required />
-
-          <div class="actions">
-            <button type="submit" id="save-btn">Guardar</button>
-            <button type="button" id="cancel-btn" class="secondary" hidden>Cancelar edición</button>
-          </div>
-          <p id="message" role="status" aria-live="polite"></p>
-        </form>
-      </section>
-
-      <section class="card">
-        <div class="list-header">
-          <h2>Lista de estudiantes</h2>
-          <span id="total">Total: 0</span>
+    <section class="card">
+      <h2>Formulario de Producto</h2>
+      <form id="product-form">
+        <input type="hidden" id="product-id">
+        <div class="row">
+          <label>Nombre</label>
+          <input type="text" id="product-name" required>
         </div>
-        <div class="table-wrapper">
-          <table>
-            <thead>
-              <tr>
-                <th>Nombre</th>
-                <th>Matrícula</th>
-                <th>Correo</th>
-                <th>Curso</th>
-                <th>Promedio</th>
-                <th>Acciones</th>
-              </tr>
-            </thead>
-            <tbody id="student-list"></tbody>
-          </table>
+        <div class="row">
+          <label>Descripción</label>
+          <input type="text" id="product-desc" required>
         </div>
-      </section>
-    </main>
+        <div class="row">
+          <label>Precio</label>
+          <input type="number" id="product-price" step="0.01" required>
+        </div>
+        <div class="row">
+          <label>Categoría</label>
+          <input type="text" id="product-cat" required>
+        </div>
+        <div class="actions">
+          <button type="submit" id="save-btn">Guardar</button>
+          <button type="button" id="cancel-btn">Limpiar</button>
+        </div>
+      </form>
+    </section>
 
-    <script src="app.js"></script>
-  </body>
+    <section class="card">
+      <h2>Lista de Productos</h2>
+      <table id="products-table">
+        <thead>
+          <tr><th>Nombre</th><th>Descripción</th><th>Precio</th><th>Categoría</th><th>Acciones</th></tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </section>
+
+  </main>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script src="app.js"></script>
+</body>
 </html>
