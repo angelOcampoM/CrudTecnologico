@@ -14,6 +14,7 @@ La entidad seleccionada es **Estudiante** y cada registro contiene 5 campos:
 - HTML5
 - CSS3
 - JavaScript (Vanilla)
+- Canvas API (animación de fondo)
 - LocalStorage (persistencia de datos en navegador)
 
 ## Funcionalidades
@@ -23,9 +24,11 @@ La entidad seleccionada es **Estudiante** y cada registro contiene 5 campos:
 - ✅ Eliminar estudiantes
 - ✅ Validación de campos obligatorios y rango de promedio (0 a 10)
 - ✅ Mensajes de estado para confirmar acciones
+- ✅ Fondo animado estilo juego de Pacman (decorativo)
 
 ## Diseño y funcionamiento del formulario
 - El formulario está en una tarjeta principal con estilo inspirado en bloques interactivos (estética Mario Bros) y paleta azulada.
+- El sitio incluye un fondo animado tipo Pacman (canvas) para dar apariencia de videojuego sin afectar las acciones del CRUD.
 - Los campos del formulario (`nombre`, `matrícula`, `correo`, `curso`, `promedio`) son obligatorios.
 - El botón **Guardar** crea un registro nuevo cuando no hay edición activa.
 - Al pulsar **Editar** en una fila, el formulario carga los datos del estudiante y cambia a modo edición.

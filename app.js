@@ -14,6 +14,7 @@ const studentList = document.getElementById('student-list');
 const total = document.getElementById('total');
 const formTitle = document.getElementById('form-title');
 const cancelBtn = document.getElementById('cancel-btn');
+const pacmanCanvas = document.getElementById('pacman-bg');
 
 let students = loadStudents();
 let idSequence = 0;
@@ -206,4 +207,122 @@ cancelBtn.addEventListener('click', () => {
   showMessage('Edición cancelada.');
 });
 
+function setupPacmanBackground() {
+  if (!pacmanCanvas) {
+    return;
+  }
+
+  const context = pacmanCanvas.getContext('2d');
+  if (!context) {
+    return;
+  }
+
+  const reducedMotionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+  const cellSize = 32;
+  let width = 0;
+  let height = 0;
+  let animationId = 0;
+  let x = 0;
+  let direction = 1;
+  let mouthOpen = true;
+
+  function resizeCanvas() {
+    width = window.innerWidth;
+    height = window.innerHeight;
+    pacmanCanvas.width = width;
+    pacmanCanvas.height = height;
+  }
+
+  function drawMaze() {
+    context.strokeStyle = 'rgba(30, 58, 138, 0.3)';
+    context.lineWidth = 2;
+    for (let y = cellSize; y < height; y += cellSize * 2) {
+      for (let startX = 0; startX < width; startX += cellSize * 4) {
+        context.beginPath();
+        context.moveTo(startX, y);
+        context.lineTo(startX + cellSize * 2, y);
+        context.stroke();
+      }
+    }
+  }
+
+  function drawDots(laneY) {
+    context.fillStyle = 'rgba(255, 255, 255, 0.85)';
+    for (let dotX = 10; dotX < width; dotX += 26) {
+      context.beginPath();
+      context.arc(dotX, laneY, 2.5, 0, Math.PI * 2);
+      context.fill();
+    }
+  }
+
+  function drawPacman(centerX, centerY) {
+    const mouth = mouthOpen ? 0.32 : 0.12;
+    const start = direction === 1 ? mouth : Math.PI + mouth;
+    const end = direction === 1 ? Math.PI * 2 - mouth : Math.PI - mouth;
+    context.fillStyle = '#facc15';
+    context.beginPath();
+    context.moveTo(centerX, centerY);
+    context.arc(centerX, centerY, 16, start, end, false);
+    context.closePath();
+    context.fill();
+  }
+
+  function drawGhost(centerX, centerY) {
+    context.fillStyle = 'rgba(236, 72, 153, 0.85)';
+    context.beginPath();
+    context.arc(centerX, centerY, 14, Math.PI, 0);
+    context.lineTo(centerX + 14, centerY + 10);
+    context.lineTo(centerX + 7, centerY + 6);
+    context.lineTo(centerX, centerY + 10);
+    context.lineTo(centerX - 7, centerY + 6);
+    context.lineTo(centerX - 14, centerY + 10);
+    context.closePath();
+    context.fill();
+  }
+
+  function animate() {
+    context.clearRect(0, 0, width, height);
+    drawMaze();
+
+    const laneY = Math.max(120, height * 0.25);
+    drawDots(laneY);
+
+    x += direction * 2;
+    if (x > width + 30) {
+      x = width + 30;
+      direction = -1;
+    } else if (x < -30) {
+      x = -30;
+      direction = 1;
+    }
+
+    mouthOpen = !mouthOpen;
+    drawPacman(x, laneY);
+    drawGhost(x - direction * 80, laneY);
+
+    animationId = window.requestAnimationFrame(animate);
+  }
+
+  resizeCanvas();
+  window.addEventListener('resize', resizeCanvas);
+
+  if (!reducedMotionQuery.matches) {
+    animate();
+  } else {
+    context.clearRect(0, 0, width, height);
+    drawMaze();
+  }
+
+  reducedMotionQuery.addEventListener('change', () => {
+    if (reducedMotionQuery.matches) {
+      window.cancelAnimationFrame(animationId);
+      context.clearRect(0, 0, width, height);
+      drawMaze();
+      return;
+    }
+    animate();
+  });
+}
+
+setupPacmanBackground();
 renderStudents();
