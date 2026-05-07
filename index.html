@@ -3,15 +3,120 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>CRUD Estudiantes</title>
+    <title>CRUD Estudiantes – PAC-MAN</title>
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
-    <canvas id="pacman-bg" aria-hidden="true"></canvas>
+
+    <!-- ══════════════════════════════
+         FONDO ANIMADO: Carriles Pac-Man
+         ══════════════════════════════ -->
+
+    <!-- Carril 1: Pac-Man grande + Blinky + Pinky -->
+    <div class="pac-lane pac-lane-1">
+      <div class="pac-mouth lg"></div>
+      <div class="pac-dots">
+        <div class="pac-dot power"></div>
+        <div class="pac-dot small"></div>
+        <div class="pac-dot small"></div>
+        <div class="pac-dot small"></div>
+        <div class="pac-dot small"></div>
+
+        <!-- Blinky (rojo) -->
+        <div class="ghost-wrap blinky" style="position:relative;">
+          <div class="ghost-top"></div>
+          <div class="ghost-skirt"></div>
+          <div class="ghost-eyes-row">
+            <div class="g-eye"><div class="g-pupil"></div></div>
+            <div class="g-eye"><div class="g-pupil"></div></div>
+          </div>
+        </div>
+
+        <div class="pac-dot small"></div>
+        <div class="pac-dot small"></div>
+        <div class="pac-dot small"></div>
+
+        <!-- Pinky (rosa) -->
+        <div class="ghost-wrap pinky" style="position:relative;">
+          <div class="ghost-top"></div>
+          <div class="ghost-skirt"></div>
+          <div class="ghost-eyes-row">
+            <div class="g-eye"><div class="g-pupil"></div></div>
+            <div class="g-eye"><div class="g-pupil"></div></div>
+          </div>
+        </div>
+
+        <div class="pac-dot small"></div>
+        <div class="pac-dot small"></div>
+        <div class="pac-dot power"></div>
+        <div class="pac-dot small"></div>
+        <div class="pac-dot small"></div>
+      </div>
+    </div>
+
+    <!-- Carril 2: Pac-Man mediano + Inky -->
+    <div class="pac-lane pac-lane-2">
+      <div class="pac-mouth md"></div>
+      <div class="pac-dots">
+        <div class="pac-dot small"></div>
+        <div class="pac-dot small"></div>
+        <div class="pac-dot power"></div>
+        <div class="pac-dot small"></div>
+        <div class="pac-dot small"></div>
+
+        <!-- Inky (cyan) -->
+        <div class="ghost-wrap inky" style="position:relative;">
+          <div class="ghost-top"></div>
+          <div class="ghost-skirt"></div>
+          <div class="ghost-eyes-row">
+            <div class="g-eye"><div class="g-pupil"></div></div>
+            <div class="g-eye"><div class="g-pupil"></div></div>
+          </div>
+        </div>
+
+        <div class="pac-dot small"></div>
+        <div class="pac-dot small"></div>
+        <div class="pac-dot small"></div>
+        <div class="pac-dot small"></div>
+        <div class="pac-dot power"></div>
+      </div>
+    </div>
+
+    <!-- Carril 3: Pac-Man pequeño + Clyde -->
+    <div class="pac-lane pac-lane-3">
+      <div class="pac-mouth sm"></div>
+      <div class="pac-dots">
+        <div class="pac-dot small"></div>
+        <div class="pac-dot power"></div>
+        <div class="pac-dot small"></div>
+        <div class="pac-dot small"></div>
+
+        <!-- Clyde (naranja) -->
+        <div class="ghost-wrap clyde" style="position:relative;">
+          <div class="ghost-top"></div>
+          <div class="ghost-skirt"></div>
+          <div class="ghost-eyes-row">
+            <div class="g-eye"><div class="g-pupil"></div></div>
+            <div class="g-eye"><div class="g-pupil"></div></div>
+          </div>
+        </div>
+
+        <div class="pac-dot small"></div>
+        <div class="pac-dot small"></div>
+        <div class="pac-dot small"></div>
+        <div class="pac-dot power"></div>
+        <div class="pac-dot small"></div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════
+         CONTENIDO PRINCIPAL
+         ══════════════════════════════ -->
     <main class="container">
       <h1>CRUD de Estudiantes</h1>
       <p class="subtitle">Gestiona estudiantes con persistencia en LocalStorage.</p>
 
+      <!-- Formulario -->
       <section class="card">
         <h2 id="form-title">Registrar estudiante</h2>
         <form id="student-form" novalidate>
@@ -40,6 +145,7 @@
         </form>
       </section>
 
+      <!-- Lista -->
       <section class="card">
         <div class="list-header">
           <h2>Lista de estudiantes</h2>
@@ -61,6 +167,17 @@
           </table>
         </div>
       </section>
+
+      <!-- Pie decorativo -->
+      <div class="pac-footer">
+        <div class="pac-footer-dot"></div>
+        <div class="pac-footer-dot"></div>
+        <div class="pac-footer-dot"></div>
+        WAKA WAKA WAKA
+        <div class="pac-footer-dot"></div>
+        <div class="pac-footer-dot"></div>
+        <div class="pac-footer-dot"></div>
+      </div>
     </main>
 
     <script src="app.js"></script>

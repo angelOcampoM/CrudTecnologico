@@ -44,7 +44,7 @@ function resetForm() {
 
 function showMessage(text, isError = false) {
   message.textContent = text;
-  message.style.color = isError ? '#dc2626' : '#065f46';
+  message.style.color = isError ? '#ff6b6b' : '#6bffb8';
 }
 
 function generateId() {
