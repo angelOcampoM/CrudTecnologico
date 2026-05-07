@@ -24,6 +24,14 @@ La entidad seleccionada es **Estudiante** y cada registro contiene 5 campos:
 - ✅ Validación de campos obligatorios y rango de promedio (0 a 10)
 - ✅ Mensajes de estado para confirmar acciones
 
+## Diseño y funcionamiento del formulario
+- El formulario está en una tarjeta principal con estilo inspirado en bloques interactivos (estética Mario Bros) y paleta azulada.
+- Los campos del formulario (`nombre`, `matrícula`, `correo`, `curso`, `promedio`) son obligatorios.
+- El botón **Guardar** crea un registro nuevo cuando no hay edición activa.
+- Al pulsar **Editar** en una fila, el formulario carga los datos del estudiante y cambia a modo edición.
+- El botón **Cancelar edición** limpia el formulario y regresa al modo de registro.
+- Los cambios se reflejan de inmediato en la tabla y se guardan en `LocalStorage`.
+
 ## Instrucciones para ejecutar el proyecto
 1. Clonar el repositorio:
    ```bash
