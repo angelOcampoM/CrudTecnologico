@@ -221,10 +221,11 @@ function setupPacmanBackground() {
   const cellSize = 32;
   let width = 0;
   let height = 0;
-  let animationId = 0;
+  let animationFrameId = 0;
   let x = 0;
   let direction = 1;
   let mouthOpen = true;
+  let frameCount = 0;
 
   function resizeCanvas() {
     width = window.innerWidth;
@@ -281,6 +282,10 @@ function setupPacmanBackground() {
   }
 
   function animate() {
+    if (width === 0 || height === 0) {
+      return;
+    }
+
     context.clearRect(0, 0, width, height);
     drawMaze();
 
@@ -296,14 +301,20 @@ function setupPacmanBackground() {
       direction = 1;
     }
 
-    mouthOpen = !mouthOpen;
+    frameCount += 1;
+    if (frameCount % 6 === 0) {
+      mouthOpen = !mouthOpen;
+    }
     drawPacman(x, laneY);
     drawGhost(x - direction * 80, laneY);
 
-    animationId = window.requestAnimationFrame(animate);
+    animationFrameId = window.requestAnimationFrame(animate);
   }
 
   resizeCanvas();
+  if (width === 0 || height === 0) {
+    return;
+  }
   window.addEventListener('resize', resizeCanvas);
 
   if (!reducedMotionQuery.matches) {
@@ -315,7 +326,7 @@ function setupPacmanBackground() {
 
   reducedMotionQuery.addEventListener('change', () => {
     if (reducedMotionQuery.matches) {
-      window.cancelAnimationFrame(animationId);
+      window.cancelAnimationFrame(animationFrameId);
       context.clearRect(0, 0, width, height);
       drawMaze();
       return;
