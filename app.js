@@ -1,4 +1,6 @@
 const STORAGE_KEY = 'crud-estudiantes';
+const MIN_GRADE = 0;
+const MAX_GRADE = 10;
 
 const studentForm = document.getElementById('student-form');
 const studentIdInput = document.getElementById('student-id');
@@ -15,6 +17,8 @@ const cancelBtn = document.getElementById('cancel-btn');
 
 let students = loadStudents();
 let idSequence = 0;
+gradeInput.min = String(MIN_GRADE);
+gradeInput.max = String(MAX_GRADE);
 
 function loadStudents() {
   try {
@@ -44,10 +48,18 @@ function showMessage(text, isError = false) {
 
 function generateId() {
   if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
-    return crypto.randomUUID();
+    let uuid = crypto.randomUUID();
+    while (students.some((student) => student.id === uuid)) {
+      uuid = crypto.randomUUID();
+    }
+    return uuid;
   }
-  idSequence += 1;
-  return `${Date.now()}-${idSequence}-${Math.random().toString(16).slice(2)}-${Math.random().toString(16).slice(2)}`;
+  let fallbackId = '';
+  do {
+    idSequence += 1;
+    fallbackId = `${Date.now()}-${idSequence}-${Math.random().toString(16).slice(2)}-${Math.random().toString(16).slice(2)}`;
+  } while (students.some((student) => student.id === fallbackId));
+  return fallbackId;
 }
 
 function renderStudents() {
@@ -106,8 +118,8 @@ function validateForm(data) {
   }
 
   const gradeValue = Number(data.grade);
-  if (Number.isNaN(gradeValue) || gradeValue < 0 || gradeValue > 10) {
-    return 'El promedio debe estar entre 0 y 10.';
+  if (Number.isNaN(gradeValue) || gradeValue < MIN_GRADE || gradeValue > MAX_GRADE) {
+    return `El promedio debe estar entre ${MIN_GRADE} y ${MAX_GRADE}.`;
   }
 
   return null;
@@ -132,7 +144,13 @@ studentForm.addEventListener('submit', (event) => {
   }
 
   if (studentIdInput.value) {
-    students = students.map((student) => (student.id === data.id ? data : student));
+    const existingIndex = students.findIndex((student) => student.id === data.id);
+    if (existingIndex === -1) {
+      showMessage('No se encontró el estudiante a actualizar.', true);
+      resetForm();
+      return;
+    }
+    students[existingIndex] = data;
     showMessage('Estudiante actualizado correctamente.');
   } else {
     students.push(data);
@@ -170,7 +188,7 @@ studentList.addEventListener('click', (event) => {
   }
 
   if (action === 'delete') {
-    const confirmed = window.confirm(`¿Eliminar a ${student.name}?`);
+    const confirmed = window.confirm(`¿Eliminar a ${String(student.name)}?`);
     if (!confirmed) {
       return;
     }
