@@ -42,16 +42,10 @@ function showMessage(text, isError = false) {
 }
 
 function generateId() {
-  return `${Date.now()}-${Math.random().toString(16).slice(2)}`;
-}
-
-function escapeHtml(value) {
-  return String(value)
-    .replaceAll('&', '&amp;')
-    .replaceAll('<', '&lt;')
-    .replaceAll('>', '&gt;')
-    .replaceAll('"', '&quot;')
-    .replaceAll("'", '&#039;');
+  if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
+    return crypto.randomUUID();
+  }
+  return `${Date.now()}-${Math.random().toString(16).slice(2)}-${Math.random().toString(16).slice(2)}`;
 }
 
 function renderStudents() {
@@ -66,19 +60,33 @@ function renderStudents() {
 
   students.forEach((student) => {
     const row = document.createElement('tr');
-    row.innerHTML = `
-      <td>${escapeHtml(student.name)}</td>
-      <td>${escapeHtml(student.enrollment)}</td>
-      <td>${escapeHtml(student.email)}</td>
-      <td>${escapeHtml(student.course)}</td>
-      <td>${escapeHtml(student.grade)}</td>
-      <td>
-        <div class="row-actions">
-          <button type="button" data-action="edit" data-id="${student.id}">Editar</button>
-          <button type="button" class="warn" data-action="delete" data-id="${student.id}">Eliminar</button>
-        </div>
-      </td>
-    `;
+    const values = [student.name, student.enrollment, student.email, student.course, student.grade];
+    values.forEach((value) => {
+      const cell = document.createElement('td');
+      cell.textContent = String(value);
+      row.appendChild(cell);
+    });
+
+    const actionsCell = document.createElement('td');
+    const actionsWrapper = document.createElement('div');
+    actionsWrapper.className = 'row-actions';
+
+    const editButton = document.createElement('button');
+    editButton.type = 'button';
+    editButton.dataset.action = 'edit';
+    editButton.dataset.id = student.id;
+    editButton.textContent = 'Editar';
+
+    const deleteButton = document.createElement('button');
+    deleteButton.type = 'button';
+    deleteButton.className = 'warn';
+    deleteButton.dataset.action = 'delete';
+    deleteButton.dataset.id = student.id;
+    deleteButton.textContent = 'Eliminar';
+
+    actionsWrapper.append(editButton, deleteButton);
+    actionsCell.appendChild(actionsWrapper);
+    row.appendChild(actionsCell);
     fragment.appendChild(row);
   });
 
@@ -89,6 +97,11 @@ function renderStudents() {
 function validateForm(data) {
   if (!data.name || !data.enrollment || !data.email || !data.course || !data.grade) {
     return 'Todos los campos son obligatorios.';
+  }
+
+  const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailPattern.test(data.email)) {
+    return 'Ingresa un correo válido.';
   }
 
   const gradeValue = Number(data.grade);
