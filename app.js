@@ -14,6 +14,7 @@ const formTitle = document.getElementById('form-title');
 const cancelBtn = document.getElementById('cancel-btn');
 
 let students = loadStudents();
+let idSequence = 0;
 
 function loadStudents() {
   try {
@@ -45,7 +46,8 @@ function generateId() {
   if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
     return crypto.randomUUID();
   }
-  return `${Date.now()}-${Math.random().toString(16).slice(2)}-${Math.random().toString(16).slice(2)}`;
+  idSequence += 1;
+  return `${Date.now()}-${idSequence}-${Math.random().toString(16).slice(2)}-${Math.random().toString(16).slice(2)}`;
 }
 
 function renderStudents() {
@@ -99,8 +101,7 @@ function validateForm(data) {
     return 'Todos los campos son obligatorios.';
   }
 
-  const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  if (!emailPattern.test(data.email)) {
+  if (!emailInput.checkValidity()) {
     return 'Ingresa un correo válido.';
   }
 
