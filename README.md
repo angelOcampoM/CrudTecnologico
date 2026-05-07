@@ -40,6 +40,25 @@ La entidad seleccionada es **Estudiante** y cada registro contiene 5 campos:
      ```
      y abrir `http://localhost:8000`.
 
+## Lista rápida para echarlo a andar (paso a paso)
+1. Abre el sistema (`index.html` o `http://localhost:8000`).
+2. Registra un estudiante llenando todos los campos y pulsa **Guardar**.
+3. Verifica que aparezca en la tabla de **Lista de estudiantes**.
+4. Pulsa **Editar**, cambia un dato y vuelve a guardar para confirmar actualización.
+5. Pulsa **Eliminar** y confirma para validar borrado.
+6. Recarga la página y confirma que los datos se conservan (LocalStorage).
+7. Repite con varios registros para comprobar estabilidad (por ejemplo 100 registros).
+
+## Checklist de revisión (rúbrica)
+- [x] Repositorio en GitHub
+- [x] README completo
+- [x] Interfaz funcional
+- [x] Crear registros
+- [x] Consultar registros
+- [x] Editar registros
+- [x] Eliminar registros
+- [x] Organización del código
+
 ## Evidencias o capturas de pantalla
 Interfaz principal del sistema:
 
