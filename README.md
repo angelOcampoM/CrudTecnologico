@@ -1,1 +1,84 @@
-# CrudTecnologico
+# CRUD de Estudiantes
+
+## Descripción
+Aplicación web tipo CRUD para gestionar estudiantes. Permite registrar, consultar, editar y eliminar registros desde una interfaz simple en navegador, con persistencia local usando LocalStorage.
+
+La entidad seleccionada es **Estudiante** y cada registro contiene 5 campos:
+- Nombre completo
+- Matrícula
+- Correo
+- Curso
+- Promedio
+
+## Tecnologías utilizadas
+- HTML5
+- CSS3
+- JavaScript (Vanilla)
+- Canvas API (animación de fondo)
+- LocalStorage (persistencia de datos en navegador)
+
+## Funcionalidades
+- ✅ Registrar nuevos estudiantes
+- ✅ Consultar lista de estudiantes
+- ✅ Editar estudiantes existentes
+- ✅ Eliminar estudiantes
+- ✅ Validación de campos obligatorios y rango de promedio (0 a 10)
+- ✅ Mensajes de estado para confirmar acciones
+- ✅ Fondo animado estilo juego de Pacman (decorativo)
+
+## Diseño y funcionamiento del formulario
+- El formulario está en una tarjeta principal con estilo inspirado en bloques interactivos (estética Mario Bros) y paleta azulada.
+- El sitio incluye un fondo animado tipo Pacman (canvas) para dar apariencia de videojuego sin afectar las acciones del CRUD.
+- Los campos del formulario (`nombre`, `matrícula`, `correo`, `curso`, `promedio`) son obligatorios.
+- El botón **Guardar** crea un registro nuevo cuando no hay edición activa.
+- Al pulsar **Editar** en una fila, el formulario carga los datos del estudiante y cambia a modo edición.
+- El botón **Cancelar edición** limpia el formulario y regresa al modo de registro.
+- Los cambios se reflejan de inmediato en la tabla y se guardan en `LocalStorage`.
+
+## Instrucciones para ejecutar el proyecto
+1. Clonar el repositorio:
+   ```bash
+   git clone https://github.com/angelOcampoM/CrudTecnologico.git
+   ```
+2. Entrar a la carpeta del proyecto:
+   ```bash
+   cd CrudTecnologico
+   ```
+3. Abrir `index.html` en el navegador.
+   - También puedes ejecutar un servidor local opcional:
+     ```bash
+     python3 -m http.server 8000
+     ```
+     y abrir `http://localhost:8000`.
+
+## Lista rápida para ponerlo en marcha (paso a paso)
+1. Abre el sistema (`index.html` o `http://localhost:8000`).
+2. Registra un estudiante llenando todos los campos y pulsa **Guardar**.
+3. Verifica que aparezca en la tabla de **Lista de estudiantes**.
+4. Pulsa **Editar**, cambia un dato y vuelve a guardar para confirmar actualización.
+5. Pulsa **Eliminar** y confirma para validar borrado.
+6. Recarga la página y confirma que los datos se conservan (LocalStorage).
+7. Repite con varios registros para comprobar estabilidad (por ejemplo 100 registros).
+
+## Checklist de revisión (rúbrica)
+- [x] Repositorio en GitHub
+- [x] README completo
+- [x] Interfaz funcional
+- [x] Crear registros
+- [x] Consultar registros
+- [x] Editar registros
+- [x] Eliminar registros
+- [x] Organización del código
+
+## Evidencias o capturas de pantalla
+Interfaz principal del sistema:
+
+![Captura del CRUD funcionando](assets/captura-crud-mariobros.png)
+
+## Uso de Inteligencia Artificial
+Sí se utilizó IA como apoyo para:
+- organizar y redactar el README,
+- estructurar el código base del CRUD,
+- validar que se cumplieran los criterios solicitados.
+
+El funcionamiento general del proyecto puede ser explicado paso a paso (estructura HTML, lógica CRUD en JavaScript, renderizado de tabla y persistencia con LocalStorage).
