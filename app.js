@@ -217,11 +217,16 @@ function setupPacmanBackground() {
     return;
   }
 
+  const DOT_START_OFFSET = 10;
+  const DOT_SPACING = 26;
+  const MOUTH_OPEN_ANGLE = 0.32;
+  const MOUTH_CLOSED_ANGLE = 0.12;
+  const MOUTH_ANIMATION_FRAME_INTERVAL = 6;
   const reducedMotionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
   const cellSize = 32;
   let width = 0;
   let height = 0;
-  let animationFrameId = 0;
+  let animationFrameId = null;
   let x = 0;
   let direction = 1;
   let mouthOpen = true;
@@ -249,7 +254,7 @@ function setupPacmanBackground() {
 
   function drawDots(laneY) {
     context.fillStyle = 'rgba(255, 255, 255, 0.85)';
-    for (let dotX = 10; dotX < width; dotX += 26) {
+    for (let dotX = DOT_START_OFFSET; dotX < width; dotX += DOT_SPACING) {
       context.beginPath();
       context.arc(dotX, laneY, 2.5, 0, Math.PI * 2);
       context.fill();
@@ -257,7 +262,7 @@ function setupPacmanBackground() {
   }
 
   function drawPacman(centerX, centerY) {
-    const mouth = mouthOpen ? 0.32 : 0.12;
+    const mouth = mouthOpen ? MOUTH_OPEN_ANGLE : MOUTH_CLOSED_ANGLE;
     const start = direction === 1 ? mouth : Math.PI + mouth;
     const end = direction === 1 ? Math.PI * 2 - mouth : Math.PI - mouth;
     context.fillStyle = '#facc15';
@@ -302,7 +307,7 @@ function setupPacmanBackground() {
     }
 
     frameCount += 1;
-    if (frameCount % 6 === 0) {
+    if (frameCount % MOUTH_ANIMATION_FRAME_INTERVAL === 0) {
       mouthOpen = !mouthOpen;
     }
     drawPacman(x, laneY);
