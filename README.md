@@ -40,7 +40,7 @@ La entidad seleccionada es **Estudiante** y cada registro contiene 5 campos:
      ```
      y abrir `http://localhost:8000`.
 
-## Lista rápida para echarlo a andar (paso a paso)
+## Lista rápida para ponerlo en marcha (paso a paso)
 1. Abre el sistema (`index.html` o `http://localhost:8000`).
 2. Registra un estudiante llenando todos los campos y pulsa **Guardar**.
 3. Verifica que aparezca en la tabla de **Lista de estudiantes**.
